@@ -1,0 +1,4 @@
+/* App.css — intentionally empty.
+   This file is retained to prevent a 404 if anything imports it.
+   All styles live in src/styles/globals.css (imported in main.tsx)
+   and co-located component CSS files. */

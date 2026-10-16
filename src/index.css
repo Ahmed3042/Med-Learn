@@ -1,0 +1,3 @@
+/* Med-Learn root mount — intentionally minimal.
+   All design tokens, resets, and global styles live in src/styles/globals.css.
+   This file exists only to satisfy the Vite entry point convention. */
