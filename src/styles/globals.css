@@ -162,14 +162,20 @@ body {
   color: var(--text-primary);
   background: var(--bg-base);
   line-height: 1.6;
-  overflow: hidden; /* desktop app — no body scroll */
+  /* Scroll lock applied only at desktop widths — see media query below */
 }
 
 #root {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
+  flex-direction: column;
+}
+
+/* Lock scroll on desktop (≥960 px) to preserve the fixed-height desktop layout */
+@media (min-width: 960px) {
+  body  { overflow: hidden; }
+  #root { height: 100vh; overflow: hidden; flex-direction: row; }
 }
 
 /* ─────────────────────────────────────────────

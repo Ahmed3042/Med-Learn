@@ -5,6 +5,10 @@ import './Sidebar.css';
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  /** Called when a nav link is activated — used by AppLayout to close the mobile drawer */
+  onNavClick?: () => void;
+  /** Element id forwarded for aria-controls on the hamburger button */
+  id?: string;
 }
 
 const NAV_ITEMS = [
@@ -20,7 +24,7 @@ const BOTTOM_ITEMS = [
   { to: '/settings', icon: '⚙️', label: 'Settings' },
 ];
 
-export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -37,7 +41,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     .toUpperCase() ?? '?';
 
   return (
-    <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`} aria-label="Main navigation">
+    <aside id={id} className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`} aria-label="Main navigation">
       {/* Logo / Brand */}
       <div className="sidebar__brand">
         <div className="sidebar__logo" aria-hidden="true">
@@ -78,6 +82,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`
                 }
                 title={collapsed ? item.label : undefined}
+                onClick={onNavClick}
               >
                 <span className="sidebar__link-icon" aria-hidden="true">{item.icon}</span>
                 {!collapsed && <span className="sidebar__link-label">{item.label}</span>}
@@ -100,6 +105,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`
                 }
                 title={collapsed ? item.label : undefined}
+                onClick={onNavClick}
               >
                 <span className="sidebar__link-icon" aria-hidden="true">{item.icon}</span>
                 {!collapsed && <span className="sidebar__link-label">{item.label}</span>}

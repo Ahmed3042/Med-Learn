@@ -1,16 +1,137 @@
+/* ─── Desktop layout (≥960 px) ─── */
+
 .app-layout {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
   background: var(--bg-base);
+  /* Full viewport on desktop; auto-height on mobile */
+  min-height: 100vh;
 }
 
 .app-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   min-width: 0;
   transition: margin-left var(--transition-slow);
+}
+
+/* Desktop: lock to viewport height and enable internal scroll */
+@media (min-width: 960px) {
+  .app-layout {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app-main {
+    overflow: hidden;
+  }
+
+  /* Hide mobile hamburger on desktop */
+  .app-menu-btn {
+    display: none !important;
+  }
+
+  /* Hide overlay on desktop */
+  .app-sidebar-overlay {
+    display: none !important;
+  }
+}
+
+/* ─── Mobile layout (<960 px) ─── */
+
+@media (max-width: 959px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  /* Hamburger button — shown in a slim top bar */
+  .app-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .app-menu-btn:hover {
+    background: var(--border);
+    color: var(--text-primary);
+  }
+
+  /* Mobile top bar */
+  .app-topbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    height: 52px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+
+  .app-topbar__brand {
+    font-size: var(--text-base);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .app-main {
+    flex: 1;
+    overflow: visible;
+  }
+
+  /* Sidebar slides in as an off-canvas drawer */
+  .app-layout .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    box-shadow: var(--shadow-xl);
+    width: var(--sidebar-width) !important; /* always full-width on mobile */
+  }
+
+  .app-layout[data-mobile-open='true'] .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Scrim overlay */
+  .app-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-slow);
+  }
+
+  .app-layout[data-mobile-open='true'] .app-sidebar-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* ─── Desktop top bar is hidden — only visible on mobile ─── */
+
+.app-topbar {
+  display: none;
+}
+
+@media (max-width: 959px) {
+  .app-topbar {
+    display: flex;
+  }
 }

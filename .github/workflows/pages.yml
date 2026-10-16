@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+# Trigger: push to main (or manually)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Required permissions for the Pages deployment action
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment runs at a time; cancel pending ones if a new push arrives
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build web bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build for GitHub Pages
+        # VITE_BASE_PATH sets the <base> in the Vite build so all assets and
+        # the React Router basename resolve under /Med-Learn/.
+        # Change this value if the repository is ever renamed.
+        env:
+          VITE_BASE_PATH: /Med-Learn/
+        run: npm run build
+
+      - name: Add .nojekyll
+        # Prevents GitHub Pages / Jekyll from stripping underscore-prefixed assets
+        run: touch dist/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

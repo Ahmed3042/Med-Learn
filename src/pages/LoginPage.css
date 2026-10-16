@@ -1,8 +1,7 @@
 .login-page {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* ─── Brand Panel ─── */
@@ -185,4 +184,48 @@
 
 .login-demo-hint strong {
   color: var(--color-accent);
+}
+
+/* ─── Responsive ─── */
+
+/* Tablet: reduce brand panel width */
+@media (max-width: 768px) {
+  .login-panel--brand {
+    flex: 0 0 280px;
+    padding: var(--space-8) var(--space-6);
+  }
+}
+
+/* Mobile: stack panels vertically, hide large decorative panel */
+@media (max-width: 600px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-panel--brand {
+    flex: none;
+    min-height: 160px;
+    padding: var(--space-6) var(--space-5);
+    justify-content: flex-start;
+    gap: var(--space-4);
+  }
+
+  /* Hide feature list on small screens to keep the panel compact */
+  .login-features {
+    display: none;
+  }
+
+  .login-panel__faculty {
+    display: none;
+  }
+
+  .login-panel--form {
+    padding: var(--space-6) var(--space-5);
+    align-items: flex-start;
+  }
+
+  .login-form-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
 }

@@ -214,3 +214,26 @@
   color: var(--color-danger);
   background: rgba(231, 76, 60, 0.12);
 }
+
+/* ─── Mobile overrides ─── */
+
+@media (max-width: 959px) {
+  /* Always show full-width sidebar when used as a drawer */
+  .sidebar {
+    width: var(--sidebar-width) !important;
+    height: 100vh;
+  }
+
+  /* Show logout always (not collapsed on mobile) */
+  .sidebar__user-info,
+  .sidebar__logout,
+  .sidebar__brand-text,
+  .sidebar__link-label {
+    display: block !important;
+  }
+
+  /* Hide the collapse toggle on mobile — drawer close is via overlay / hamburger */
+  .sidebar__toggle {
+    display: none;
+  }
+}
