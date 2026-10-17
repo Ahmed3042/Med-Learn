@@ -90,7 +90,19 @@ export function VideoPlayer({ lesson, userId, courseId }: VideoPlayerProps) {
     };
   }, [userId, courseId, lesson.id]);
 
-  const togglePlay = useCallback(() => setPlaying(p => !p), []);
+  const togglePlay = useCallback(() => {
+    setPlaying(currentPlaying => {
+      if (!currentPlaying) {
+        // If playback is already at (or past) the duration, restart from zero
+        if (duration > 0 && simSecondsRef.current >= duration) {
+          setSimSeconds(0);
+          ProgressService.saveVideoProgress(userId, courseId, lesson.id, 0);
+        }
+        return true;
+      }
+      return false;
+    });
+  }, [duration, userId, courseId, lesson.id]);
 
   const seekTo = useCallback((targetSeconds: number) => {
     const clamped = Math.max(0, Math.min(duration, Math.round(targetSeconds)));

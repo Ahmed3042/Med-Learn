@@ -9,6 +9,10 @@ interface SidebarProps {
   onNavClick?: () => void;
   /** Element id forwarded for aria-controls on the hamburger button */
   id?: string;
+  /** Whether the sidebar is being rendered inside the mobile drawer */
+  isMobile?: boolean;
+  /** Pass inert to disable interactivity when mobile drawer is closed */
+  inert?: boolean;
 }
 
 const NAV_ITEMS = [
@@ -24,7 +28,7 @@ const BOTTOM_ITEMS = [
   { to: '/settings', icon: '⚙️', label: 'Settings' },
 ];
 
-export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
+export function Sidebar({ collapsed, onToggle, onNavClick, id, isMobile = false, inert }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -40,8 +44,16 @@ export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
     .slice(0, 2)
     .toUpperCase() ?? '?';
 
+  // Desktop collapse state is ignored in mobile drawer view
+  const isDesktopCollapsed = collapsed && !isMobile;
+
   return (
-    <aside id={id} className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`} aria-label="Main navigation">
+    <aside
+      id={id}
+      className={`sidebar ${isDesktopCollapsed ? 'sidebar--collapsed' : ''}`}
+      aria-label="Main navigation"
+      inert={inert}
+    >
       {/* Logo / Brand */}
       <div className="sidebar__brand">
         <div className="sidebar__logo" aria-hidden="true">
@@ -50,12 +62,10 @@ export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
             <path d="M14 6v16M6 14h16" stroke="white" strokeWidth="3" strokeLinecap="round" />
           </svg>
         </div>
-        {!collapsed && (
-          <div className="sidebar__brand-text">
-            <span className="sidebar__brand-name">Med-Learn</span>
-            <span className="sidebar__brand-subtitle">Medical Education</span>
-          </div>
-        )}
+        <div className="sidebar__brand-text">
+          <span className="sidebar__brand-name">Med-Learn</span>
+          <span className="sidebar__brand-subtitle">Medical Education</span>
+        </div>
         <button
           className="sidebar__toggle"
           onClick={onToggle}
@@ -81,11 +91,11 @@ export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
                 className={({ isActive }) =>
                   `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`
                 }
-                title={collapsed ? item.label : undefined}
+                title={isDesktopCollapsed ? item.label : undefined}
                 onClick={onNavClick}
               >
                 <span className="sidebar__link-icon" aria-hidden="true">{item.icon}</span>
-                {!collapsed && <span className="sidebar__link-label">{item.label}</span>}
+                <span className="sidebar__link-label">{item.label}</span>
               </NavLink>
             </li>
           ))}
@@ -104,11 +114,11 @@ export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
                 className={({ isActive }) =>
                   `sidebar__link ${isActive ? 'sidebar__link--active' : ''}`
                 }
-                title={collapsed ? item.label : undefined}
+                title={isDesktopCollapsed ? item.label : undefined}
                 onClick={onNavClick}
               >
                 <span className="sidebar__link-icon" aria-hidden="true">{item.icon}</span>
-                {!collapsed && <span className="sidebar__link-label">{item.label}</span>}
+                <span className="sidebar__link-label">{item.label}</span>
               </NavLink>
             </li>
           ))}
@@ -117,24 +127,20 @@ export function Sidebar({ collapsed, onToggle, onNavClick, id }: SidebarProps) {
         {/* User section */}
         <div className="sidebar__user">
           <div className="sidebar__avatar" aria-hidden="true">{initials}</div>
-          {!collapsed && (
-            <div className="sidebar__user-info">
-              <span className="sidebar__user-name">{user?.name}</span>
-              <span className="sidebar__user-role">{user?.year}</span>
-            </div>
-          )}
-          {!collapsed && (
-            <button
-              className="sidebar__logout"
-              onClick={handleLogout}
-              aria-label="Log out"
-              title="Log out"
-            >
-              <svg viewBox="0 0 16 16" fill="none" width="14" height="14">
-                <path d="M11 5l3 3-3 3M14 8H6M8 3H4a1 1 0 00-1 1v8a1 1 0 001 1h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          )}
+          <div className="sidebar__user-info">
+            <span className="sidebar__user-name">{user?.name}</span>
+            <span className="sidebar__user-role">{user?.year}</span>
+          </div>
+          <button
+            className="sidebar__logout"
+            onClick={handleLogout}
+            aria-label="Log out"
+            title="Log out"
+          >
+            <svg viewBox="0 0 16 16" fill="none" width="14" height="14">
+              <path d="M11 5l3 3-3 3M14 8H6M8 3H4a1 1 0 00-1 1v8a1 1 0 001 1h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </nav>
     </aside>

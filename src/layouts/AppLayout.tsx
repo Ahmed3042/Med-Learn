@@ -1,10 +1,14 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { StorageService } from '../services/StorageService';
 import './AppLayout.css';
 
 const SIDEBAR_COLLAPSED_KEY = 'ui:sidebar:collapsed';
+
+function getIsMobile() {
+  return typeof window !== 'undefined' ? window.matchMedia('(max-width: 959px)').matches : false;
+}
 
 export function AppLayout() {
   // Restore desktop sidebar collapsed state
@@ -13,6 +17,50 @@ export function AppLayout() {
   );
   // Mobile: whether the drawer is open
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(getIsMobile);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Sync mobile breakpoint
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 959px)');
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (!e.matches) {
+        setMobileOpen(false);
+      }
+    };
+    mql.addEventListener('change', handleMediaChange);
+    return () => mql.removeEventListener('change', handleMediaChange);
+  }, []);
+
+  // Keyboard accessibility: Escape closes drawer and restores focus to hamburger button
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setMobileOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileOpen]);
+
+  // Live system theme synchronization when theme is set to 'system'
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      const currentTheme = StorageService.get<string>('settings:theme');
+      if (currentTheme === 'system') {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleThemeChange);
+  }, []);
 
   function toggleSidebar() {
     setCollapsed(prev => {
@@ -24,8 +72,7 @@ export function AppLayout() {
 
   const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
 
-  // Close drawer and navigate — passed through context isn't needed; NavLink
-  // clicks already close the drawer via the overlay or we can add a handler.
+  // Close drawer and navigate
   function handleNavClick() {
     setMobileOpen(false);
   }
@@ -39,6 +86,7 @@ export function AppLayout() {
       {/* Mobile top bar with hamburger */}
       <header className="app-topbar">
         <button
+          ref={menuButtonRef}
           className="app-menu-btn"
           onClick={() => setMobileOpen(o => !o)}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -71,6 +119,8 @@ export function AppLayout() {
       <Sidebar
         id="app-sidebar"
         collapsed={collapsed}
+        isMobile={isMobile}
+        inert={isMobile && !mobileOpen ? true : undefined}
         onToggle={toggleSidebar}
         onNavClick={handleNavClick}
       />

@@ -98,13 +98,17 @@
     height: 100vh;
     z-index: 200;
     transform: translateX(-100%);
-    transition: transform var(--transition-slow);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform var(--transition-slow), visibility var(--transition-slow);
     box-shadow: var(--shadow-xl);
     width: var(--sidebar-width) !important; /* always full-width on mobile */
   }
 
   .app-layout[data-mobile-open='true'] .sidebar {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
   /* Scrim overlay */

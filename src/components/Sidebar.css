@@ -217,6 +217,16 @@
 
 /* ─── Mobile overrides ─── */
 
+/* Hide text / labels / user info when collapsed on desktop (≥960 px) */
+@media (min-width: 960px) {
+  .sidebar--collapsed .sidebar__brand-text,
+  .sidebar--collapsed .sidebar__link-label,
+  .sidebar--collapsed .sidebar__user-info,
+  .sidebar--collapsed .sidebar__logout {
+    display: none;
+  }
+}
+
 @media (max-width: 959px) {
   /* Always show full-width sidebar when used as a drawer */
   .sidebar {
@@ -224,16 +234,19 @@
     height: 100vh;
   }
 
-  /* Show logout always (not collapsed on mobile) */
+  /* Show labels and user info always on mobile regardless of desktop collapsed preference */
   .sidebar__user-info,
-  .sidebar__logout,
   .sidebar__brand-text,
   .sidebar__link-label {
     display: block !important;
   }
 
+  .sidebar__logout {
+    display: flex !important;
+  }
+
   /* Hide the collapse toggle on mobile — drawer close is via overlay / hamburger */
   .sidebar__toggle {
-    display: none;
+    display: none !important;
   }
 }

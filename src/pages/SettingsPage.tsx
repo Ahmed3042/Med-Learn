@@ -32,6 +32,17 @@ export function SettingsPage() {
   useEffect(() => {
     applyTheme(theme);
     StorageService.set(THEME_KEY, theme);
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSchemeChange = (e: MediaQueryListEvent) => {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      };
+      mediaQuery.addEventListener('change', handleSchemeChange);
+      return () => {
+        mediaQuery.removeEventListener('change', handleSchemeChange);
+      };
+    }
   }, [theme]);
 
   useEffect(() => {
