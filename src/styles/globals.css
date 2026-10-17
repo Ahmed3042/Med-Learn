@@ -175,7 +175,7 @@ body {
 /* Lock scroll on desktop (≥960 px) to preserve the fixed-height desktop layout */
 @media (min-width: 960px) {
   body  { overflow: hidden; }
-  #root { height: 100vh; overflow: hidden; flex-direction: row; }
+  #root { height: 100vh; overflow: hidden; }
 }
 
 /* ─────────────────────────────────────────────

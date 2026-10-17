@@ -2,6 +2,9 @@
 
 .app-layout {
   display: flex;
+  width: 100%;
+  flex: 1;
+  min-width: 0;
   background: var(--bg-base);
   /* Full viewport on desktop; auto-height on mobile */
   min-height: 100vh;
@@ -18,6 +21,7 @@
 /* Desktop: lock to viewport height and enable internal scroll */
 @media (min-width: 960px) {
   .app-layout {
+    width: 100%;
     height: 100vh;
     overflow: hidden;
   }
